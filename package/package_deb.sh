@@ -38,6 +38,7 @@ mkdir -p "${TEMPDIR}" && echo "*** Created   : ${TEMPDIR}"
 
 mkdir -p "${TEMPDIR}/usr/bin/"
 mkdir -p "${TEMPDIR}/lib/systemd/system/"
+mkdir -p "${TEMPDIR}/etc/default/"
 
 echo "*** Version   : ${VERSION}-${BUILD}"
 echo "*** Arch      : ${DEB_ARCH}"
@@ -48,11 +49,17 @@ echo "*** Out .deb  : ${OUT_DEB}"
 
 # Copy the binary
 
-cp "./bin/${EXENAME_SRC}" "${TEMPDIR}/usr/bin/${EXENAME_DST}"
+for b in "victoria-metrics" "vmagent" "vmalert" "vmauth" "vmbackup" "vmrestore"; do
+  cp ./bin/${b}-pure "${TEMPDIR}/usr/bin/${b}"
+done
 
 # Copy supporting files
 
 cp "${PACKDIR}/victoria-metrics.service" "${TEMPDIR}/lib/systemd/system/"
+cp "${PACKDIR}/victoria-metrics.default" "${TEMPDIR}/etc/default/victoria-metrics"
+
+cp "${PACKDIR}/vmagent.service" "${TEMPDIR}/lib/systemd/system/"
+cp "${PACKDIR}/vmagent.default" "${TEMPDIR}/etc/default/vmagent"
 
 # Generate debian-binary
 
@@ -80,7 +87,7 @@ cp "${PACKDIR}/deb/postrm" "${TEMPDIR}/postrm"
 
     cd "${TEMPDIR}"
 
-    find ./usr ./lib -type f | while read i ; do
+    find ./etc ./usr ./lib -type f | while read i ; do
         md5sum "$i" | sed 's/\.\///g' >> md5sums
     done
 
@@ -92,7 +99,7 @@ cp "${PACKDIR}/deb/postrm" "${TEMPDIR}/postrm"
 
     # Archive data
 
-    fakeroot -- tar -c --xz -f ./data.tar.xz ./usr ./lib
+    fakeroot -- tar -c --xz -f ./data.tar.xz ./usr ./lib ./etc
 
     # Make final archive
 

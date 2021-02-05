@@ -8,8 +8,10 @@ StartLimitBurst=5
 StartLimitInterval=0
 Restart=on-failure
 RestartSec=1
-ExecStart=/usr/bin/victoria-metrics-prod -storageDataPath=/var/lib/victoria-metrics-data
+EnvironmentFile=/etc/default/victoria-metrics
+ExecStart=/usr/bin/victoria-metrics $ARGS
 ExecStop=/bin/kill -s SIGTERM $MAINPID
+TimeoutStopSec=20
 LimitNOFILE=65536
 LimitNPROC=32000
 

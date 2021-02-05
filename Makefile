@@ -194,6 +194,9 @@ app-local-pure:
 app-local-with-goarch:
 	GO111MODULE=on go build $(RACE) -mod=vendor -ldflags "$(GO_BUILDINFO)" -o bin/$(APP_NAME)-$(GOARCH)$(RACE) $(PKG_PREFIX)/app/$(APP_NAME)
 
+debian-pure-arm: vmrestore-pure vmagent-pure vmbackup-pure vmalert-pure vmctl-pure victoria-metrics-pure vmauth-pure
+	package/package_deb.sh arm
+
 quicktemplate-gen: install-qtc
 	qtc
 
